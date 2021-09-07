@@ -1,0 +1,8 @@
+[package]
+name = "tacview"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+zip = "0.5"
+thiserror = "1.0"
