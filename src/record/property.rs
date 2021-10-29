@@ -432,6 +432,51 @@ impl Coords {
             self.heading = Some(heading);
         }
     }
+
+    pub fn lon(mut self, v: f64) -> Self {
+        self.longitude = Some(v);
+        self
+    }
+
+    pub fn lat(mut self, v: f64) -> Self {
+        self.latitude = Some(v);
+        self
+    }
+
+    pub fn alt(mut self, v: f64) -> Self {
+        self.altitude = Some(v);
+        self
+    }
+
+    pub fn u(mut self, v: f64) -> Self {
+        self.u = Some(v);
+        self
+    }
+
+    pub fn v(mut self, v: f64) -> Self {
+        self.v = Some(v);
+        self
+    }
+
+    pub fn roll(mut self, v: f64) -> Self {
+        self.roll = Some(v);
+        self
+    }
+
+    pub fn pitch(mut self, v: f64) -> Self {
+        self.pitch = Some(v);
+        self
+    }
+
+    pub fn yaw(mut self, v: f64) -> Self {
+        self.yaw = Some(v);
+        self
+    }
+
+    pub fn heading(mut self, v: f64) -> Self {
+        self.heading = Some(v);
+        self
+    }
 }
 
 #[derive(Debug, PartialEq, Eq)]
