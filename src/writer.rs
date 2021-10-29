@@ -17,7 +17,7 @@ where
     }
 
     pub fn write(&mut self, record: impl Into<Record>) -> Result<(), io::Error> {
-        self.wr.write_all(record.into().to_string().as_bytes())?;
+        writeln!(self.wr, "{}", record.into().to_string())?;
         Ok(())
     }
 
