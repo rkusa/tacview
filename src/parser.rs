@@ -1,6 +1,9 @@
 use std::io::{BufRead, BufReader, Lines, Read};
 use std::str::FromStr;
 
+use zip::read::ZipFile;
+use zip::result::ZipError;
+
 use crate::record::{self, Record};
 
 pub struct Parser<R> {
@@ -32,6 +35,16 @@ impl<R> Parser<R> {
         }
 
         Ok(Parser { lines })
+    }
+
+    pub fn new_compressed(rd: &mut R) -> Result<Parser<ZipFile<'_>>, ParseError>
+    where
+        R: Read,
+    {
+        let file = zip::read::read_zipfile_from_stream(rd)?
+            .ok_or(ParseError::Zip(ZipError::FileNotFound))?;
+        dbg!(file.name());
+        Parser::new(file)
     }
 }
 
@@ -109,4 +122,6 @@ pub enum ParseError {
     InvalidEvent,
     #[error("encountered invalid coordinate format")]
     InvalidCoordinateFormat,
+    #[error("error reading zip compressed input")]
+    Zip(#[from] zip::result::ZipError),
 }

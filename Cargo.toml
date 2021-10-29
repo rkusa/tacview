@@ -5,4 +5,4 @@ edition = "2018"
 
 [dependencies]
 thiserror = "1.0"
-zip = "0.5"
+zip = { version = "0.5", default-features = false, features = ["deflate"] }
