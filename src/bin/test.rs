@@ -1,8 +1,6 @@
 use std::fs::File;
 use std::time::Instant;
 
-use tacview::TacviewParser;
-
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let filename = std::env::args().nth(1).expect("missing filename");
 
@@ -13,7 +11,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     for i in 0..zip.len() {
         let file = zip.by_index(i)?;
-        let parser = TacviewParser::new(file)?;
+        let parser = tacview::Parser::new(file)?;
         for record in parser {
             println!("{:?}", record?);
         }
