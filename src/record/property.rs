@@ -1004,44 +1004,44 @@ impl Display for Coords {
             write!(
                 f,
                 "{}|{}|{}|{}|{}|{}|{}|{}|{}",
-                NoneAsEmpty(self.longitude),
-                NoneAsEmpty(self.latitude),
-                NoneAsEmpty(self.altitude),
-                NoneAsEmpty(self.roll),
-                NoneAsEmpty(self.pitch),
-                NoneAsEmpty(self.yaw),
-                NoneAsEmpty(self.u),
-                NoneAsEmpty(self.v),
-                NoneAsEmpty(self.heading)
+                NoneAsEmpty(max_precision(self.longitude, 7)),
+                NoneAsEmpty(max_precision(self.latitude, 7)),
+                NoneAsEmpty(max_precision(self.altitude, 2)),
+                NoneAsEmpty(max_precision(self.roll, 1)),
+                NoneAsEmpty(max_precision(self.pitch, 1)),
+                NoneAsEmpty(max_precision(self.yaw, 1)),
+                NoneAsEmpty(max_precision(self.u, 2)),
+                NoneAsEmpty(max_precision(self.v, 2)),
+                NoneAsEmpty(max_precision(self.heading, 1))
             )
         } else if self.yaw.is_some() || self.pitch.is_some() || self.roll.is_some() {
             write!(
                 f,
                 "{}|{}|{}|{}|{}|{}",
-                NoneAsEmpty(self.longitude),
-                NoneAsEmpty(self.latitude),
-                NoneAsEmpty(self.altitude),
-                NoneAsEmpty(self.roll),
-                NoneAsEmpty(self.pitch),
-                NoneAsEmpty(self.yaw),
+                NoneAsEmpty(max_precision(self.longitude, 7)),
+                NoneAsEmpty(max_precision(self.latitude, 7)),
+                NoneAsEmpty(max_precision(self.altitude, 2)),
+                NoneAsEmpty(max_precision(self.roll, 1)),
+                NoneAsEmpty(max_precision(self.pitch, 1)),
+                NoneAsEmpty(max_precision(self.yaw, 1)),
             )
         } else if self.u.is_some() || self.v.is_some() {
             write!(
                 f,
                 "{}|{}|{}|{}|{}",
-                NoneAsEmpty(self.longitude),
-                NoneAsEmpty(self.latitude),
-                NoneAsEmpty(self.altitude),
-                NoneAsEmpty(self.u),
-                NoneAsEmpty(self.v),
+                NoneAsEmpty(max_precision(self.longitude, 7)),
+                NoneAsEmpty(max_precision(self.latitude, 7)),
+                NoneAsEmpty(max_precision(self.altitude, 2)),
+                NoneAsEmpty(max_precision(self.u, 2)),
+                NoneAsEmpty(max_precision(self.v, 2)),
             )
         } else {
             write!(
                 f,
                 "{}|{}|{}",
-                NoneAsEmpty(self.longitude),
-                NoneAsEmpty(self.latitude),
-                NoneAsEmpty(self.altitude),
+                NoneAsEmpty(max_precision(self.longitude, 7)),
+                NoneAsEmpty(max_precision(self.latitude, 7)),
+                NoneAsEmpty(max_precision(self.altitude, 2)),
             )
         }
     }
@@ -1081,4 +1081,8 @@ fn to_index(i: u8) -> Cow<'static, str> {
         8 => Cow::Borrowed("9"),
         i => Cow::Owned((i + 1).to_string()),
     }
+}
+
+fn max_precision(v: Option<f64>, max_precision: u32) -> Option<f64> {
+    v.map(|v| super::max_precision(v, max_precision))
 }
