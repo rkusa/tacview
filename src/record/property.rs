@@ -372,31 +372,31 @@ pub enum Property {
 #[derive(Debug, Default)]
 pub struct Coords {
     /// Unit: deg
-    longitude: Option<f64>,
+    pub longitude: Option<f64>,
 
     /// Unit: deg
-    latitude: Option<f64>,
+    pub latitude: Option<f64>,
 
     /// Unit: m
-    altitude: Option<f64>,
+    pub altitude: Option<f64>,
 
     /// Native x coordinate from a flat world.
-    u: Option<f64>,
+    pub u: Option<f64>,
 
     /// Native y coordinate from a flat world.
-    v: Option<f64>,
+    pub v: Option<f64>,
 
     /// Positive when rolling the aircraft to the right.
-    roll: Option<f64>,
+    pub roll: Option<f64>,
 
     /// Positive when taking off.
-    pitch: Option<f64>,
+    pub pitch: Option<f64>,
 
     /// Clockwise relative to true north.
-    yaw: Option<f64>,
+    pub yaw: Option<f64>,
 
     /// Yaw relative to true north of the flat world.
-    heading: Option<f64>,
+    pub heading: Option<f64>,
 }
 
 #[derive(Debug)]

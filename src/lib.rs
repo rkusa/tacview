@@ -1,4 +1,4 @@
-mod record;
+pub mod record;
 
 use std::io::{BufRead, BufReader, Lines, Read};
 use std::str::FromStr;

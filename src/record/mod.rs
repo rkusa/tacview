@@ -5,7 +5,7 @@ mod update;
 
 pub use event::Event;
 pub use global_property::GlobalProperty;
-pub use property::Property;
+pub use property::{Color, Coords, Property, Tag};
 pub use update::Update;
 
 #[derive(Debug)]
