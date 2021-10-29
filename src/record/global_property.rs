@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use crate::ParseError;
 
@@ -70,5 +70,26 @@ impl FromStr for GlobalProperty {
             "ReferenceLatitude" => Self::ReferenceLongitude(value.parse()?),
             name => Self::Unknown(name.to_string(), value.to_string()),
         })
+    }
+}
+
+impl Display for GlobalProperty {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use GlobalProperty::*;
+        match self {
+            DataSource(v) => write!(f, "0,DataSource={}", v),
+            DataRecorder(v) => write!(f, "0,DataRecorder={}", v),
+            ReferenceTime(v) => write!(f, "0,ReferenceTime={}", v),
+            RecordingTime(v) => write!(f, "0,RecordingTime={}", v),
+            Author(v) => write!(f, "0,Author={}", v),
+            Title(v) => write!(f, "0,Title={}", v),
+            Category(v) => write!(f, "0,Category={}", v),
+            Briefing(v) => write!(f, "0,Briefing={}", v),
+            Debriefing(v) => write!(f, "0,Debriefing={}", v),
+            Comments(v) => write!(f, "0,Comments={}", v),
+            ReferenceLongitude(v) => write!(f, "0,ReferenceLongitude={}", v),
+            ReferenceLatitude(v) => write!(f, "0,ReferenceLatitude={}", v),
+            Unknown(v, _) => write!(f, "0,Unknown={}", v),
+        }
     }
 }

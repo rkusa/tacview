@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use crate::ParseError;
 
@@ -37,5 +37,15 @@ impl FromStr for Update {
         }
 
         Ok(Update { id, props })
+    }
+}
+
+impl Display for Update {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.id)?;
+        for p in &self.props {
+            write!(f, ",{}", p)?;
+        }
+        Ok(())
     }
 }

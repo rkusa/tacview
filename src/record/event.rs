@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use crate::ParseError;
 
@@ -51,7 +51,7 @@ pub enum EventKind {
 
     /// Unknown event. This only exists for forward compatibility and using it is not recommended
     /// as the event you are using could be move to the known event in a future release.
-    Unknown,
+    Unknown(String),
 }
 
 impl FromStr for Event {
@@ -69,7 +69,7 @@ impl FromStr for Event {
             "TakenOff" => EventKind::TakenOff,
             "Landed" => EventKind::Landed,
             "Timeout" => EventKind::Timeout,
-            _ => EventKind::Unknown,
+            name => EventKind::Unknown(name.to_string()),
         };
 
         let mut params = parts.map(String::from).collect::<Vec<_>>();
@@ -80,5 +80,35 @@ impl FromStr for Event {
         };
 
         Ok(Event { kind, params, text })
+    }
+}
+
+impl Display for Event {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "0,Event={}", self.kind.as_str())?;
+        for param in &self.params {
+            write!(f, "|{}", param)?;
+        }
+        if let Some(text) = &self.text {
+            write!(f, "|{}", text)?;
+        }
+        Ok(())
+    }
+}
+
+impl EventKind {
+    fn as_str(&self) -> &str {
+        use EventKind::*;
+        match self {
+            Message => "Message",
+            Bookmark => "Bookmark",
+            Debug => "Debug",
+            LeftArea => "LeftArea",
+            Destroyed => "Destroyed",
+            TakenOff => "TakenOff",
+            Landed => "Landed",
+            Timeout => "Timeout",
+            Unknown(name) => name,
+        }
     }
 }

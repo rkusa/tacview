@@ -1,6 +1,8 @@
 #![allow(clippy::upper_case_acronyms)]
 
+use std::borrow::Cow;
 use std::collections::HashSet;
+use std::fmt::Display;
 use std::str::FromStr;
 
 use crate::ParseError;
@@ -632,6 +634,102 @@ impl FromStr for Property {
     }
 }
 
+impl Display for Property {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        use Property::*;
+        match self {
+            T(v) => write!(f, "T={}", v),
+            Name(v) => write!(f, "Name={}", v),
+            Type(v) => write!(f, "Type={}", join(v.iter().map(|v| v.as_str()), "+")),
+            Parent(v) => write!(f, "Parent={:x}", v),
+            Next(v) => write!(f, "Next={:x}", v),
+            CallSign(v) => write!(f, "CallSign={}", v),
+            Registration(v) => write!(f, "Registration={}", v),
+            Squawk(v) => write!(f, "Squawk={}", v),
+            ICAO24(v) => write!(f, "ICAO24={}", v),
+            Pilot(v) => write!(f, "Pilot={}", v),
+            Group(v) => write!(f, "Group={}", v),
+            Country(v) => write!(f, "Country={}", v),
+            Coalition(v) => write!(f, "Coalition={}", v),
+            Color(v) => write!(f, "Color={}", v.as_str()),
+            Shape(v) => write!(f, "Shape={}", v),
+            Debug(v) => write!(f, "Debug={}", v),
+            Label(v) => write!(f, "Label={}", v),
+            FocusedTarget(v) => write!(f, "FocusedTarget={:x}", v),
+            LockedTarget(v) => write!(f, "LockedTarget={:x}", v),
+            Importance(v) => write!(f, "Importance={}", v),
+            Slot(v) => write!(f, "Slot={}", v),
+            Disabled(v) => write!(f, "Disabled={}", *v as i32),
+            Visible(v) => write!(f, "Visible={}", *v as i32),
+            Health(v) => write!(f, "Health={}", v),
+            Length(v) => write!(f, "Length={}", v),
+            Width(v) => write!(f, "Width={}", v),
+            Height(v) => write!(f, "Height={}", v),
+            Radius(v) => write!(f, "Radius={}", v),
+            IAS(v) => write!(f, "IAS={}", v),
+            CAS(v) => write!(f, "CAS={}", v),
+            TAS(v) => write!(f, "TAS={}", v),
+            Mach(v) => write!(f, "Mach={}", v),
+            AOA(v) => write!(f, "AOA={}", v),
+            AOS(v) => write!(f, "AOS={}", v),
+            AGL(v) => write!(f, "AGL={}", v),
+            HDG(v) => write!(f, "HDG={}", v),
+            HDM(v) => write!(f, "HDM={}", v),
+            Throttle(v) => write!(f, "Throttle={}", v),
+            Afterburner(v) => write!(f, "Afterburner={}", v),
+            AirBrakes(v) => write!(f, "AirBrakes={}", v),
+            Flaps(v) => write!(f, "Flaps={}", v),
+            LandingGear(v) => write!(f, "LandingGear={}", v),
+            LandingGearHandle(v) => write!(f, "LandingGearHandle={}", v),
+            Tailhook(v) => write!(f, "Tailhook={}", v),
+            Parachute(v) => write!(f, "Parachute={}", v),
+            DragChute(v) => write!(f, "DragChute={}", v),
+            FuelWeight(i, v) => write!(f, "FuelWeight{}={}", to_index(*i), v),
+            FuelVolume(i, v) => write!(f, "FuelVolume{}={}", to_index(*i), v),
+            FuelFlowWeight(i, v) => write!(f, "FuelFlowWeight{}={}", to_index(*i), v),
+            FuelFlowVolume(i, v) => write!(f, "FuelFlowVolume{}={}", to_index(*i), v),
+            RadarMode(v) => write!(f, "RadarMode={}", v),
+            RadarAzimuth(v) => write!(f, "RadarAzimuth={}", v),
+            RadarElevation(v) => write!(f, "RadarElevation={}", v),
+            RadarRoll(v) => write!(f, "RadarRoll={}", v),
+            RadarRange(v) => write!(f, "RadarRange={}", v),
+            RadarHorizontalBeamwidth(v) => write!(f, "RadarHorizontalBeamwidth={}", v),
+            RadarVerticalBeamwidth(v) => write!(f, "RadarVerticalBeamwidth={}", v),
+            LockedTargetMode(v) => write!(f, "LockedTargetMode={}", v),
+            LockedTargetAzimuth(v) => write!(f, "LockedTargetAzimuth={}", v),
+            LockedTargetElevation(v) => write!(f, "LockedTargetElevation={}", v),
+            LockedTargetRange(v) => write!(f, "LockedTargetRange={}", v),
+            EngagementMode(v) => write!(f, "EngagementMode={}", v),
+            EngagementMode2(v) => write!(f, "EngagementMode2={}", v),
+            EngagementRange(v) => write!(f, "EngagementRange={}", v),
+            EngagementRange2(v) => write!(f, "EngagementRange2={}", v),
+            VerticalEngagementRange(v) => write!(f, "VerticalEngagementRange={}", v),
+            VerticalEngagementRange2(v) => write!(f, "VerticalEngagementRange2={}", v),
+            RollControlInput(v) => write!(f, "RollControlInput={}", v),
+            PitchControlInput(v) => write!(f, "PitchControlInput={}", v),
+            YawControlInput(v) => write!(f, "YawControlInput={}", v),
+            RollControlPosition(v) => write!(f, "RollControlPosition={}", v),
+            PitchControlPosition(v) => write!(f, "PitchControlPosition={}", v),
+            YawControlPosition(v) => write!(f, "YawControlPosition={}", v),
+            RollTrimTab(v) => write!(f, "RollTrimTab={}", v),
+            PitchTrimTab(v) => write!(f, "PitchTrimTab={}", v),
+            YawTrimTab(v) => write!(f, "YawTrimTab={}", v),
+            AileronLeft(v) => write!(f, "AileronLeft={}", v),
+            AileronRight(v) => write!(f, "AileronRight={}", v),
+            Elevator(v) => write!(f, "Elevator={}", v),
+            Rudder(v) => write!(f, "Rudder={}", v),
+            PilotHeadRoll(v) => write!(f, "PilotHeadRoll={}", v),
+            PilotHeadPitch(v) => write!(f, "PilotHeadPitch={}", v),
+            PilotHeadYaw(v) => write!(f, "PilotHeadYaw={}", v),
+            VerticalGForce(v) => write!(f, "VerticalGForce={}", v),
+            LongitudinalGForce(v) => write!(f, "LongitudinalGForce={}", v),
+            LateralGForce(v) => write!(f, "LateralGForce={}", v),
+            ENL(v) => write!(f, "ENL={}", v),
+            Unknown(k, v) => write!(f, "{}={}", k, v),
+        }
+    }
+}
+
 impl<'a> From<&'a str> for Color {
     fn from(s: &str) -> Self {
         match s {
@@ -641,6 +739,21 @@ impl<'a> From<&'a str> for Color {
             "Blue" => Self::Blue,
             "Violet" => Self::Violet,
             color => Self::Unknown(color.to_string()),
+        }
+    }
+}
+
+impl Color {
+    fn as_str(&self) -> &str {
+        use Color::*;
+        match self {
+            Red => "Red",
+            Orange => "Orange",
+            Green => "Green",
+            Blue => "Blue",
+            Violet => "Violet",
+            Grey => "Grey",
+            Unknown(color) => color,
         }
     }
 }
@@ -693,6 +806,59 @@ impl<'a> From<&'a str> for Tag {
             "Container" => Self::Container,
             "Shrapnel" => Self::Shrapnel,
             tag => Self::Unknown(tag.to_string()),
+        }
+    }
+}
+
+impl Tag {
+    fn as_str(&self) -> &str {
+        use Tag::*;
+        match self {
+            Air => "Air",
+            Ground => "Ground",
+            Sea => "Sea",
+            Weapon => "Weapon",
+            Sensor => "Sensor",
+            Navaid => "Navaid",
+            Misc => "Misc",
+            Static => "Static",
+            Heavy => "Heavy",
+            Medium => "Medium",
+            Light => "Light",
+            Minor => "Minor",
+            FixedWing => "FixedWing",
+            Rotorcraft => "Rotorcraft",
+            Armor => "Armor",
+            AntiAircraft => "AntiAircraft",
+            Vehicle => "Vehicle",
+            Watercraft => "Watercraft",
+            Human => "Human",
+            Biologic => "Biologic",
+            Missile => "Missile",
+            Rocket => "Rocket",
+            Bomb => "Bomb",
+            Torpedo => "Torpedo",
+            Projectile => "Projectile",
+            Beam => "Beam",
+            Decoy => "Decoy",
+            Building => "Building",
+            Bullseye => "Bullseye",
+            Waypoint => "Waypoint",
+            Tank => "Tank",
+            Warship => "Warship",
+            AircraftCarrier => "AircraftCarrier",
+            Submarine => "Submarine",
+            Infantry => "Infantry",
+            Parachutist => "Parachutist",
+            Shell => "Shell",
+            Bullet => "Bullet",
+            Flare => "Flare",
+            Chaff => "Chaff",
+            SmokeGrenade => "SmokeGrenade",
+            Aerodrome => "Aerodrome",
+            Container => "Container",
+            Shrapnel => "Shrapnel",
+            Unknown(tag) => tag,
         }
     }
 }
@@ -784,5 +950,90 @@ impl FromStr for Coords {
             _ => return Err(ParseError::InvalidCoordinateFormat),
         }
         Ok(coords)
+    }
+}
+
+impl Display for Coords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.heading.is_some() {
+            write!(
+                f,
+                "{}|{}|{}|{}|{}|{}|{}|{}|{}",
+                NoneAsEmpty(self.longitude),
+                NoneAsEmpty(self.latitude),
+                NoneAsEmpty(self.altitude),
+                NoneAsEmpty(self.roll),
+                NoneAsEmpty(self.pitch),
+                NoneAsEmpty(self.yaw),
+                NoneAsEmpty(self.u),
+                NoneAsEmpty(self.v),
+                NoneAsEmpty(self.heading)
+            )
+        } else if self.yaw.is_some() || self.pitch.is_some() || self.roll.is_some() {
+            write!(
+                f,
+                "{}|{}|{}|{}|{}|{}",
+                NoneAsEmpty(self.longitude),
+                NoneAsEmpty(self.latitude),
+                NoneAsEmpty(self.altitude),
+                NoneAsEmpty(self.roll),
+                NoneAsEmpty(self.pitch),
+                NoneAsEmpty(self.yaw),
+            )
+        } else if self.u.is_some() || self.v.is_some() {
+            write!(
+                f,
+                "{}|{}|{}|{}|{}",
+                NoneAsEmpty(self.longitude),
+                NoneAsEmpty(self.latitude),
+                NoneAsEmpty(self.altitude),
+                NoneAsEmpty(self.u),
+                NoneAsEmpty(self.v),
+            )
+        } else {
+            write!(
+                f,
+                "{}|{}|{}",
+                NoneAsEmpty(self.longitude),
+                NoneAsEmpty(self.latitude),
+                NoneAsEmpty(self.altitude),
+            )
+        }
+    }
+}
+
+fn join<'a>(iter: impl Iterator<Item = &'a str>, sep: &'a str) -> String {
+    iter.fold(String::new(), |mut acc, v| {
+        if !acc.is_empty() {
+            acc += sep;
+        }
+        acc + v
+    })
+}
+
+struct NoneAsEmpty<V>(Option<V>);
+
+impl<V: Display> Display for NoneAsEmpty<V> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if let Some(v) = &self.0 {
+            v.fmt(f)
+        } else {
+            Ok(())
+        }
+    }
+}
+
+fn to_index(i: u8) -> Cow<'static, str> {
+    match i {
+        0 => Cow::Borrowed(""),
+        1 => Cow::Borrowed("2"),
+        2 => Cow::Borrowed("3"),
+        3 => Cow::Borrowed("4"),
+        4 => Cow::Borrowed("5"),
+        5 => Cow::Borrowed("6"),
+        6 => Cow::Borrowed("7"),
+        7 => Cow::Borrowed("8"),
+        8 => Cow::Borrowed("9"),
+        i => Cow::Owned((i + 1).to_string()),
     }
 }
