@@ -1,5 +1,6 @@
 #![allow(clippy::upper_case_acronyms)]
 
+use std::collections::HashSet;
 use std::str::FromStr;
 
 use crate::ParseError;
@@ -18,7 +19,7 @@ pub enum Property {
     /// Object types are built using tags. This makes object management much more powerful and
     /// transparent than with the previous exclusive types. Type and Name are the only properties
     /// which *CANNOT* be predefined in Tacview database.
-    Type(Vec<Tag>),
+    Type(HashSet<Tag>),
 
     /// Parent object id. Useful to associate for example a missile (child object) and
     /// its launcher aircraft (parent object).
@@ -399,7 +400,39 @@ pub struct Coords {
     pub heading: Option<f64>,
 }
 
-#[derive(Debug)]
+impl Coords {
+    pub fn update(&mut self, other: &Coords, reference_latitude: f64, reference_longitude: f64) {
+        if let Some(longitude) = other.longitude {
+            self.longitude = Some(longitude + reference_longitude);
+        }
+        if let Some(latitude) = other.latitude {
+            self.latitude = Some(latitude + reference_latitude);
+        }
+        if let Some(altitude) = other.altitude {
+            self.altitude = Some(altitude);
+        }
+        if let Some(u) = other.u {
+            self.u = Some(u);
+        }
+        if let Some(v) = other.v {
+            self.v = Some(v);
+        }
+        if let Some(roll) = other.roll {
+            self.roll = Some(roll);
+        }
+        if let Some(pitch) = other.pitch {
+            self.pitch = Some(pitch);
+        }
+        if let Some(yaw) = other.yaw {
+            self.yaw = Some(yaw);
+        }
+        if let Some(heading) = other.heading {
+            self.heading = Some(heading);
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub enum Color {
     Red,
     Orange,
@@ -410,7 +443,7 @@ pub enum Color {
     Unknown(String),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Hash, PartialEq, Eq)]
 pub enum Tag {
     // Class
     Air,
