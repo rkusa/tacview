@@ -433,43 +433,23 @@ impl Coords {
         }
     }
 
-    pub fn lon(mut self, v: f64) -> Self {
-        self.longitude = Some(v);
+    pub fn position(mut self, lat: f64, lon: f64, alt: f64) -> Self {
+        self.latitude = Some(lat);
+        self.longitude = Some(lon);
+        self.altitude = Some(alt);
         self
     }
 
-    pub fn lat(mut self, v: f64) -> Self {
-        self.latitude = Some(v);
-        self
-    }
-
-    pub fn alt(mut self, v: f64) -> Self {
-        self.altitude = Some(v);
-        self
-    }
-
-    pub fn u(mut self, v: f64) -> Self {
-        self.u = Some(v);
-        self
-    }
-
-    pub fn v(mut self, v: f64) -> Self {
+    pub fn uv(mut self, u: f64, v: f64) -> Self {
+        self.u = Some(u);
         self.v = Some(v);
         self
     }
 
-    pub fn roll(mut self, v: f64) -> Self {
-        self.roll = Some(v);
-        self
-    }
-
-    pub fn pitch(mut self, v: f64) -> Self {
-        self.pitch = Some(v);
-        self
-    }
-
-    pub fn yaw(mut self, v: f64) -> Self {
-        self.yaw = Some(v);
+    pub fn orientation(mut self, yaw: f64, pitch: f64, roll: f64) -> Self {
+        self.yaw = Some(yaw);
+        self.pitch = Some(pitch);
+        self.roll = Some(roll);
         self
     }
 
@@ -1000,7 +980,9 @@ impl FromStr for Coords {
 
 impl Display for Coords {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.heading.is_some() {
+        let has_orientation = self.yaw.is_some() || self.pitch.is_some() || self.roll.is_some();
+        let has_uv = self.u.is_some() || self.v.is_some();
+        if self.heading.is_some() || (has_orientation && has_uv) {
             write!(
                 f,
                 "{}|{}|{}|{}|{}|{}|{}|{}|{}",
@@ -1014,7 +996,7 @@ impl Display for Coords {
                 NoneAsEmpty(max_precision(self.v, 2)),
                 NoneAsEmpty(max_precision(self.heading, 1))
             )
-        } else if self.yaw.is_some() || self.pitch.is_some() || self.roll.is_some() {
+        } else if has_orientation {
             write!(
                 f,
                 "{}|{}|{}|{}|{}|{}",
@@ -1025,7 +1007,7 @@ impl Display for Coords {
                 NoneAsEmpty(max_precision(self.pitch, 1)),
                 NoneAsEmpty(max_precision(self.yaw, 1)),
             )
-        } else if self.u.is_some() || self.v.is_some() {
+        } else if has_uv {
             write!(
                 f,
                 "{}|{}|{}|{}|{}",
