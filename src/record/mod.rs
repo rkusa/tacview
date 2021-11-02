@@ -25,7 +25,7 @@ impl Display for Record {
             Record::GlobalProperty(r) => r.fmt(f),
             Record::Event(r) => r.fmt(f),
             Record::Remove(id) => write!(f, "-{}", id),
-            Record::Frame(n) => write!(f, "#{}", max_precision(*n, 2)),
+            Record::Frame(n) => write!(f, "#{}", n.max_precision(2)),
             Record::Update(r) => r.fmt(f),
         }
     }
@@ -49,22 +49,34 @@ impl From<Update> for Record {
     }
 }
 
-fn max_precision(v: f64, max_precision: u32) -> f64 {
-    let p = f64::from(10i32.pow(max_precision));
-    (v * p).round() / p
+trait Precision {
+    fn max_precision(self, max_precision: u32) -> Self;
+}
+
+impl Precision for f64 {
+    fn max_precision(self, max_precision: u32) -> Self {
+        let p = f64::from(10i32.pow(max_precision));
+        (self * p).round() / p
+    }
+}
+
+impl Precision for Option<f64> {
+    fn max_precision(self, max_precision: u32) -> Self {
+        self.map(|v| v.max_precision(max_precision))
+    }
 }
 
 #[cfg(test)]
 mod test {
-    use super::max_precision;
+    use super::Precision;
 
     #[test]
     #[allow(clippy::float_cmp)]
     fn test_max_precision() {
-        assert_eq!(max_precision(12.3456789, 0), 12.0);
-        assert_eq!(max_precision(12.3456789, 1), 12.3);
-        assert_eq!(max_precision(12.3456789, 2), 12.35);
-        assert_eq!(max_precision(12.3456789, 3), 12.346);
-        assert_eq!(max_precision(12.3, 6), 12.3);
+        assert_eq!(12.3456789.max_precision(0), 12.0);
+        assert_eq!(12.3456789.max_precision(1), 12.3);
+        assert_eq!(12.3456789.max_precision(2), 12.35);
+        assert_eq!(12.3456789.max_precision(3), 12.346);
+        assert_eq!(12.3.max_precision(6), 12.3);
     }
 }

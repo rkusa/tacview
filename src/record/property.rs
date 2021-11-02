@@ -5,6 +5,7 @@ use std::collections::HashSet;
 use std::fmt::Display;
 use std::str::FromStr;
 
+use crate::record::Precision;
 use crate::ParseError;
 
 #[derive(Debug)]
@@ -695,7 +696,7 @@ impl Display for Property {
             CAS(v) => write!(f, "CAS={}", v),
             TAS(v) => write!(f, "TAS={}", v),
             Mach(v) => write!(f, "Mach={}", v),
-            AOA(v) => write!(f, "AOA={}", v),
+            AOA(v) => write!(f, "AOA={}", v.max_precision(2)),
             AOS(v) => write!(f, "AOS={}", v),
             AGL(v) => write!(f, "AGL={}", v),
             HDG(v) => write!(f, "HDG={}", v),
@@ -986,44 +987,44 @@ impl Display for Coords {
             write!(
                 f,
                 "{}|{}|{}|{}|{}|{}|{}|{}|{}",
-                NoneAsEmpty(max_precision(self.longitude, 7)),
-                NoneAsEmpty(max_precision(self.latitude, 7)),
-                NoneAsEmpty(max_precision(self.altitude, 2)),
-                NoneAsEmpty(max_precision(self.roll, 1)),
-                NoneAsEmpty(max_precision(self.pitch, 1)),
-                NoneAsEmpty(max_precision(self.yaw, 1)),
-                NoneAsEmpty(max_precision(self.u, 2)),
-                NoneAsEmpty(max_precision(self.v, 2)),
-                NoneAsEmpty(max_precision(self.heading, 1))
+                NoneAsEmpty(self.longitude.max_precision(7)),
+                NoneAsEmpty(self.latitude.max_precision(7)),
+                NoneAsEmpty(self.altitude.max_precision(2)),
+                NoneAsEmpty(self.roll.max_precision(1)),
+                NoneAsEmpty(self.pitch.max_precision(1)),
+                NoneAsEmpty(self.yaw.max_precision(1)),
+                NoneAsEmpty(self.u.max_precision(2)),
+                NoneAsEmpty(self.v.max_precision(2)),
+                NoneAsEmpty(self.heading.max_precision(1))
             )
         } else if has_orientation {
             write!(
                 f,
                 "{}|{}|{}|{}|{}|{}",
-                NoneAsEmpty(max_precision(self.longitude, 7)),
-                NoneAsEmpty(max_precision(self.latitude, 7)),
-                NoneAsEmpty(max_precision(self.altitude, 2)),
-                NoneAsEmpty(max_precision(self.roll, 1)),
-                NoneAsEmpty(max_precision(self.pitch, 1)),
-                NoneAsEmpty(max_precision(self.yaw, 1)),
+                NoneAsEmpty(self.longitude.max_precision(7)),
+                NoneAsEmpty(self.latitude.max_precision(7)),
+                NoneAsEmpty(self.altitude.max_precision(2)),
+                NoneAsEmpty(self.roll.max_precision(1)),
+                NoneAsEmpty(self.pitch.max_precision(1)),
+                NoneAsEmpty(self.yaw.max_precision(1)),
             )
         } else if has_uv {
             write!(
                 f,
                 "{}|{}|{}|{}|{}",
-                NoneAsEmpty(max_precision(self.longitude, 7)),
-                NoneAsEmpty(max_precision(self.latitude, 7)),
-                NoneAsEmpty(max_precision(self.altitude, 2)),
-                NoneAsEmpty(max_precision(self.u, 2)),
-                NoneAsEmpty(max_precision(self.v, 2)),
+                NoneAsEmpty(self.longitude.max_precision(7)),
+                NoneAsEmpty(self.latitude.max_precision(7)),
+                NoneAsEmpty(self.altitude.max_precision(2)),
+                NoneAsEmpty(self.u.max_precision(2)),
+                NoneAsEmpty(self.v.max_precision(2)),
             )
         } else {
             write!(
                 f,
                 "{}|{}|{}",
-                NoneAsEmpty(max_precision(self.longitude, 7)),
-                NoneAsEmpty(max_precision(self.latitude, 7)),
-                NoneAsEmpty(max_precision(self.altitude, 2)),
+                NoneAsEmpty(self.longitude.max_precision(7)),
+                NoneAsEmpty(self.latitude.max_precision(7)),
+                NoneAsEmpty(self.altitude.max_precision(2)),
             )
         }
     }
@@ -1063,8 +1064,4 @@ fn to_index(i: u8) -> Cow<'static, str> {
         8 => Cow::Borrowed("9"),
         i => Cow::Owned((i + 1).to_string()),
     }
-}
-
-fn max_precision(v: Option<f64>, max_precision: u32) -> Option<f64> {
-    v.map(|v| super::max_precision(v, max_precision))
 }
