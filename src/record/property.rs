@@ -373,7 +373,7 @@ pub enum Property {
     Unknown(String, String),
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Coords {
     /// Unit: deg
     pub longitude: Option<f64>,
