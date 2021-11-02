@@ -1,5 +1,6 @@
 use std::{fmt::Display, str::FromStr};
 
+use crate::record::Precision;
 use crate::ParseError;
 
 #[derive(Debug)]
@@ -87,8 +88,8 @@ impl Display for GlobalProperty {
             Briefing(v) => write!(f, "0,Briefing={}", v),
             Debriefing(v) => write!(f, "0,Debriefing={}", v),
             Comments(v) => write!(f, "0,Comments={}", v),
-            ReferenceLongitude(v) => write!(f, "0,ReferenceLongitude={}", v),
-            ReferenceLatitude(v) => write!(f, "0,ReferenceLatitude={}", v),
+            ReferenceLongitude(v) => write!(f, "0,ReferenceLongitude={}", v.max_precision(7)),
+            ReferenceLatitude(v) => write!(f, "0,ReferenceLatitude={}", v.max_precision(7)),
             Unknown(v, _) => write!(f, "0,Unknown={}", v),
         }
     }
