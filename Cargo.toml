@@ -1,6 +1,6 @@
 [package]
 name = "tacview"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Markus Ast <m+cargo@rkusa.st>"]
 license = "MIT OR Apache-2.0"
 description = "ACMI (Tacview) flight recordings v2.2 parser and writer."

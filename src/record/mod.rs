@@ -5,7 +5,7 @@ mod update;
 
 use std::fmt::Display;
 
-pub use event::Event;
+pub use event::{Event, EventKind};
 pub use global_property::GlobalProperty;
 pub use property::{Color, Coords, Property, Tag};
 pub use update::Update;
