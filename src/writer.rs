@@ -28,7 +28,7 @@ where
     }
 
     pub fn write(&mut self, record: impl Into<Record>) -> Result<(), io::Error> {
-        writeln!(self.wr, "{}", record.into().to_string())?;
+        writeln!(self.wr, "{}", record.into())?;
         Ok(())
     }
 

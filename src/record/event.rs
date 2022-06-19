@@ -89,9 +89,7 @@ impl Display for Event {
         for param in &self.params {
             write!(f, "|{}", param)?;
         }
-        if let Some(text) = &self.text {
-            write!(f, "|{}", text)?;
-        }
+        write!(f, "|{}", self.text.as_deref().unwrap_or_default())?;
         Ok(())
     }
 }
@@ -110,5 +108,23 @@ impl EventKind {
             Timeout => "Timeout",
             Unknown(name) => name,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_empty_event_text() {
+        assert_eq!(
+            Event {
+                kind: EventKind::Landed,
+                params: vec!["1".to_string(), "2".to_string()],
+                text: None,
+            }
+            .to_string(),
+            "0,Event=Landed|1|2|"
+        )
     }
 }
