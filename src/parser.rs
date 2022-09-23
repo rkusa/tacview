@@ -43,7 +43,6 @@ impl<R> Parser<R> {
     {
         let file = zip::read::read_zipfile_from_stream(rd)?
             .ok_or(ParseError::Zip(ZipError::FileNotFound))?;
-        dbg!(file.name());
         Parser::new(file)
     }
 }
