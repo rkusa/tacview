@@ -4,7 +4,7 @@ use crate::ParseError;
 
 use super::Property;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Update {
     pub id: u64,
     pub props: Vec<Property>,

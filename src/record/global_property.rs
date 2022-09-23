@@ -3,7 +3,7 @@ use std::{fmt::Display, str::FromStr};
 use crate::record::Precision;
 use crate::ParseError;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum GlobalProperty {
     /// Source simulator, control station or file format.
     DataSource(String),

@@ -8,7 +8,7 @@ use std::str::FromStr;
 use crate::record::Precision;
 use crate::ParseError;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Property {
     /// Object Coordinates.
     T(Coords),
@@ -460,7 +460,7 @@ impl Coords {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Color {
     Red,
     Orange,
@@ -471,7 +471,7 @@ pub enum Color {
     Unknown(String),
 }
 
-#[derive(Debug, Hash, PartialEq, Eq)]
+#[derive(Debug, Hash, Clone, PartialEq, Eq)]
 pub enum Tag {
     // Class
     Air,
