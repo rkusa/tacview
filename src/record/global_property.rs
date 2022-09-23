@@ -68,7 +68,7 @@ impl FromStr for GlobalProperty {
             "Debriefing" => Self::Debriefing(value.to_string()),
             "Comments" => Self::Comments(value.to_string()),
             "ReferenceLongitude" => Self::ReferenceLongitude(value.parse()?),
-            "ReferenceLatitude" => Self::ReferenceLongitude(value.parse()?),
+            "ReferenceLatitude" => Self::ReferenceLatitude(value.parse()?),
             name => Self::Unknown(name.to_string(), value.to_string()),
         })
     }
