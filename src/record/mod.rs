@@ -10,7 +10,7 @@ pub use global_property::GlobalProperty;
 pub use property::{Color, Coords, Property, Tag};
 pub use update::Update;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Record {
     GlobalProperty(GlobalProperty),
     Event(Event),

@@ -3,7 +3,7 @@ use std::{fmt::Display, str::FromStr};
 use crate::record::Precision;
 use crate::ParseError;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum GlobalProperty {
     /// Source simulator, control station or file format.
     DataSource(String),
@@ -87,10 +87,25 @@ impl Display for GlobalProperty {
             Category(v) => write!(f, "0,Category={v}"),
             Briefing(v) => write!(f, "0,Briefing={v}"),
             Debriefing(v) => write!(f, "0,Debriefing={v}"),
-            Comments(v) => write!(f, "0,Comments={v}"),
+            Comments(v) => write!(
+                f,
+                "0,Comments={}",
+                v.replace("\r\n", "\\\r\n").replace('\n', "\\\n")
+            ),
             ReferenceLongitude(v) => write!(f, "0,ReferenceLongitude={}", v.max_precision(7)),
             ReferenceLatitude(v) => write!(f, "0,ReferenceLatitude={}", v.max_precision(7)),
             Unknown(v, _) => write!(f, "0,Unknown={v}"),
         }
     }
+}
+
+#[test]
+fn test_multi_line_comment() {
+    let comment = GlobalProperty::Comments(
+        r#"1
+2
+3"#
+        .to_string(),
+    );
+    assert_eq!(comment.to_string(), "0,Comments=1\\\n2\\\n3");
 }

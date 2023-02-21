@@ -2,14 +2,14 @@ use std::{fmt::Display, str::FromStr};
 
 use crate::ParseError;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Event {
     pub kind: EventKind,
     pub params: Vec<String>,
     pub text: Option<String>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum EventKind {
     /// Generic event.
     Message,

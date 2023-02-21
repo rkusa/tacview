@@ -1,4 +1,4 @@
-use std::io::{BufRead, BufReader, Lines, Read};
+use std::io::{BufReader, Read};
 use std::str::FromStr;
 
 use zip::read::ZipFile;
@@ -7,7 +7,7 @@ use zip::result::ZipError;
 use crate::record::{self, Record};
 
 pub struct Parser<R> {
-    lines: Lines<BufReader<R>>,
+    lines: lines::Lines<BufReader<R>>,
 }
 
 impl<R> Parser<R> {
@@ -15,7 +15,7 @@ impl<R> Parser<R> {
     where
         R: Read,
     {
-        let mut lines = BufReader::new(rd).lines();
+        let mut lines = lines::Lines::new(BufReader::new(rd));
 
         let file_type = lines.next().ok_or(ParseError::InvalidFileType)??;
         if file_type != "FileType=text/acmi/tacview"
@@ -100,6 +100,59 @@ fn parse_line(line: String) -> Result<Option<Record>, ParseError> {
     }
 }
 
+mod lines {
+    use std::io::BufRead;
+
+    /// An iterator over the non-escaped lines of an instance of `BufRead`.
+    #[derive(Debug)]
+    pub struct Lines<B> {
+        buf: B,
+    }
+
+    impl<B> Lines<B> {
+        pub fn new(buf: B) -> Self {
+            Self { buf }
+        }
+    }
+
+    impl<B: BufRead> Iterator for Lines<B> {
+        type Item = std::io::Result<String>;
+
+        fn next(&mut self) -> Option<Self::Item> {
+            let mut buf = String::new();
+            loop {
+                match self.buf.read_line(&mut buf) {
+                    Ok(0) => {
+                        if buf.is_empty() {
+                            return None;
+                        } else {
+                            return Some(Ok(buf));
+                        }
+                    }
+                    Ok(_n) => {
+                        if buf.ends_with("\\\n") {
+                            buf.remove(buf.len() - 2);
+                            continue;
+                        }
+                        if buf.ends_with("\\\r\n") {
+                            buf.remove(buf.len() - 3);
+                            continue;
+                        }
+                        if buf.ends_with('\n') {
+                            buf.pop();
+                            if buf.ends_with('\r') {
+                                buf.pop();
+                            }
+                        }
+                        return Some(Ok(buf));
+                    }
+                    Err(e) => return Some(Err(e)),
+                }
+            }
+        }
+    }
+}
+
 // TODO: line and position information for certain errors?
 #[derive(Debug, thiserror::Error)]
 pub enum ParseError {
@@ -123,4 +176,24 @@ pub enum ParseError {
     InvalidCoordinateFormat,
     #[error("error reading zip compressed input")]
     Zip(#[from] zip::result::ZipError),
+}
+
+#[test]
+fn test_multi_line_comment() {
+    let acmi = r#"FileType=text/acmi/tacview
+FileVersion=2.2
+0,Comments=1\
+2\
+\
+3
+0,Title=Test"#;
+    let p = Parser::new(acmi.as_bytes()).unwrap();
+    let records = p.collect::<Result<Vec<_>, _>>().unwrap();
+    assert_eq!(
+        records,
+        vec![
+            Record::GlobalProperty(record::GlobalProperty::Comments("1\n2\n\n3".to_string())),
+            Record::GlobalProperty(record::GlobalProperty::Title("Test".to_string()))
+        ]
+    );
 }

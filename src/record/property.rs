@@ -8,7 +8,7 @@ use std::str::FromStr;
 use crate::record::Precision;
 use crate::ParseError;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Property {
     /// Object Coordinates.
     T(Coords),
@@ -373,7 +373,7 @@ pub enum Property {
     Unknown(String, String),
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq)]
 pub struct Coords {
     /// Unit: deg
     pub longitude: Option<f64>,
