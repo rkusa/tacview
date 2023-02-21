@@ -44,7 +44,7 @@ impl Display for Update {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}", self.id)?;
         for p in &self.props {
-            write!(f, ",{}", p)?;
+            write!(f, ",{p}")?;
         }
         Ok(())
     }

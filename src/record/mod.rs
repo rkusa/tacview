@@ -24,7 +24,7 @@ impl Display for Record {
         match self {
             Record::GlobalProperty(r) => r.fmt(f),
             Record::Event(r) => r.fmt(f),
-            Record::Remove(id) => write!(f, "-{}", id),
+            Record::Remove(id) => write!(f, "-{id}"),
             Record::Frame(n) => write!(f, "#{}", n.max_precision(2)),
             Record::Update(r) => r.fmt(f),
         }

@@ -87,7 +87,7 @@ impl Display for Event {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "0,Event={}", self.kind.as_str())?;
         for param in &self.params {
-            write!(f, "|{}", param)?;
+            write!(f, "|{param}")?;
         }
         write!(f, "|{}", self.text.as_deref().unwrap_or_default())?;
         Ok(())
