@@ -163,6 +163,10 @@ pub enum Property {
     /// Unit: ratio
     Throttle(f64),
 
+    /// Engine #2 throttle handle position (could be >1 for Afterburner and <0 for reverse).
+    /// Unit: ratio
+    Throttle2(f64),
+    
     /// Main/engine #1 afterburner status.
     /// Unit: ratio
     Afterburner(f64),
@@ -569,6 +573,7 @@ impl FromStr for Property {
             "HDG" => Property::HDG(FromStr::from_str(value)?),
             "HDM" => Property::HDM(FromStr::from_str(value)?),
             "Throttle" => Property::Throttle(FromStr::from_str(value)?),
+            "Throttle2" => Property::Throttle2(FromStr::from_str(value)?),
             "Afterburner" => Property::Afterburner(FromStr::from_str(value)?),
             "AirBrakes" => Property::AirBrakes(FromStr::from_str(value)?),
             "Flaps" => Property::Flaps(FromStr::from_str(value)?),
@@ -702,6 +707,7 @@ impl Display for Property {
             HDG(v) => write!(f, "HDG={v}"),
             HDM(v) => write!(f, "HDM={v}"),
             Throttle(v) => write!(f, "Throttle={v}"),
+            Throttle2(v) => write!(f, "Throttle2={v}"),
             Afterburner(v) => write!(f, "Afterburner={v}"),
             AirBrakes(v) => write!(f, "AirBrakes={v}"),
             Flaps(v) => write!(f, "Flaps={v}"),
