@@ -1,8 +1,8 @@
-use std::{fmt::Display, str::FromStr};
-
-use crate::ParseError;
+use std::fmt::Display;
+use std::str::FromStr;
 
 use super::Property;
+use crate::ParseError;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Update {

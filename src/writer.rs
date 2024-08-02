@@ -1,6 +1,7 @@
 use std::io::{self, Seek, Write};
 
-use zip::{write::FileOptions, ZipWriter};
+use zip::write::SimpleFileOptions;
+use zip::ZipWriter;
 
 use crate::record::Record;
 
@@ -23,7 +24,7 @@ where
         W: Seek,
     {
         let mut zip = ZipWriter::new(wr);
-        zip.start_file("track.txt.acmi", FileOptions::default())?;
+        zip.start_file("track.txt.acmi", SimpleFileOptions::default())?;
         Writer::new(zip)
     }
 

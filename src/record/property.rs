@@ -166,7 +166,7 @@ pub enum Property {
     /// Engine #2 throttle handle position (could be >1 for Afterburner and <0 for reverse).
     /// Unit: ratio
     Throttle2(f64),
-    
+
     /// Main/engine #1 afterburner status.
     /// Unit: ratio
     Afterburner(f64),
